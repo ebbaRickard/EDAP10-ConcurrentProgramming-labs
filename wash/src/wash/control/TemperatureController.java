@@ -45,7 +45,7 @@ public class TemperatureController extends ActorThread<WashingMessage> {
 							sender.send(new WashingMessage(this, WashingMessage.ACKNOWLEDGMENT));
 							tempReached = true;
 						}
-						if (io.getTemperature() <= temp - 2 + ml) {
+						if (io.getTemperature() <= temp - 1.8 + ml) {
 							io.heat(true);
 						} else if (io.getTemperature() >= temp - mu) {
 							io.heat(false);

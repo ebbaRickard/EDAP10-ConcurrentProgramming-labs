@@ -23,7 +23,7 @@ public class WaterController extends ActorThread<WashingMessage> {
 
 			while (true) {
 
-				WashingMessage m = receiveWithTimeout(10);
+				WashingMessage m = receiveWithTimeout(1);
 
 				if (m != null) {
 					System.out.println("WaterController got " + m);

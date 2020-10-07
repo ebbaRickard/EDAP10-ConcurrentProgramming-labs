@@ -42,7 +42,7 @@ public class WashingProgram1 extends ActorThread<WashingMessage> {
 			System.out.println("washing program 1 got " + ackw);
 
 			// HEAT UP
-			// Instruct the TemperatureController to heat the barrel to 40 degrees
+			// Instruct the TemperatureController to heat the barrel to specified degrees
 			temp.send(new WashingMessage(this, WashingMessage.TEMP_SET, 40));
 			WashingMessage ack = receive();
 			System.out.println("washing program 1 got " + ack);
@@ -161,4 +161,5 @@ public class WashingProgram1 extends ActorThread<WashingMessage> {
 			System.out.println("washing program terminated");
 		}
 	}
+
 }
