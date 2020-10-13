@@ -14,6 +14,7 @@ struct intset {
   int size;
   int allocated;
   int *data;
+  pthread_mutex_t A;
 };
 
 // special value indicating a free array element
@@ -25,6 +26,7 @@ struct intset *
 intset_create()
 {
   struct intset *s = malloc(sizeof(struct intset));
+
 
   // if memory allocation fails, terminate with an error
   if(s == NULL) {
@@ -38,7 +40,7 @@ intset_create()
   for (int i = 0; i < s->allocated; i++) {
     s->data[i] = EMPTY_SLOT;
   }
-
+  pthread_mutex_init(s->A, NULL); 
   return s;
 }
 
