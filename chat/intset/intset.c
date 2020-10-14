@@ -25,16 +25,16 @@ struct intset {
 struct intset *
 intset_create()
 {
+  
   struct intset *s = malloc(sizeof(struct intset));
   pthread_mutex_init(&s->A, NULL);
-  
-  pthread_mutex_lock(&s->A);
   // if memory allocation fails, terminate with an error
   if(s == NULL) {
     perror("malloc");
     exit(1);
   }
 
+  pthread_mutex_lock(&s->A);
   s->size = 0;
   s->allocated = 10;
   s->data = malloc(sizeof(int) * s->allocated);
@@ -62,11 +62,9 @@ index(struct intset *s, int a)
 static int
 find(struct intset *s, int a)
 {
-  pthread_mutex_lock(&s->A);
   int idx = index(s, a);
   for (int i = 0; i < s->allocated; i++) {
     if (s->data[idx] == a || s->data[idx] == EMPTY_SLOT) {
-      pthread_mutex_unlock(&s->A);
       return idx;
     }
     idx = (idx + 1) % s->allocated;
@@ -75,7 +73,6 @@ find(struct intset *s, int a)
   // shouldn't happen: if we got here, it means that the array is completely
   // full, which it should never become (we would rehash before that)
 
-  pthread_mutex_unlock(&s->A);
   return -1;
 }
 
@@ -84,6 +81,7 @@ find(struct intset *s, int a)
 bool
 intset_add(struct intset *s, int a)
 {
+  pthread_mutex_lock(&s->A);
   // rehash if more than 70% is used
   if (s->size >= s->allocated * 7 / 10) {
     int old_allocated = s->allocated;
@@ -115,11 +113,13 @@ intset_add(struct intset *s, int a)
 
   int idx = find(s, a);
   if (s->data[idx] == a) {
+    pthread_mutex_unlock(&s->A);
     return false;
   }
 
   s->data[idx] = a;
   s->size++;
+  pthread_mutex_unlock(&s->A);
 
   return true;
 }
@@ -129,10 +129,12 @@ intset_add(struct intset *s, int a)
 bool
 intset_contains(struct intset *s, int a)
 {
+  pthread_mutex_lock(&s->A);
   // use private helper function above
   int idx = find(s, a);
   bool found = (s->data[idx] == a);
 
+  pthread_mutex_unlock(&s->A);
   return found;
 }
 
@@ -142,6 +144,5 @@ int
 intset_size(struct intset *s)
 {
   int sz = s->size;
-
   return sz;
 }
