@@ -28,7 +28,7 @@ public class ClockMain {
 						Thread.sleep(1000 * i + t - System.currentTimeMillis());
 						i++;
 					} catch (InterruptedException e) {
-						System.out.println("Detta ska inte hända!");
+						System.out.println("This is not supposed to happen!");
 						e.printStackTrace();
 					}
 				}
